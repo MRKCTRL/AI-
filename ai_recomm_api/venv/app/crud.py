@@ -33,3 +33,5 @@ def get_content(db: Session, content_id:int):
 def get_interactions(db:Session, user_id:int):
     return db.query(models.Interaction).filter(models.Interaction.user_id ==user_id).all()
 
+def get_user_by_email(db: Session, email:str):
+    return db.query(models.User).filter(models.User.email==email)
