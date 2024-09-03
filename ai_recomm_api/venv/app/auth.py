@@ -5,7 +5,7 @@ from fastapi import Depends,HTTPException,status
 from fastapi.secruity import OAuth2PasswordBearer
 from sqlalchemy.orm import Session 
 from . import crud, models, schemas, database
-
+from .schemas import UserResponse
 
 SECRET_KEY="ty4h7+t"
 ALGORITHM="hs256"
@@ -51,3 +51,15 @@ async def get_current_user(token:str=Depends(oauth2_scheme), db:Session=Depends(
     if user is None:
         raise credentials_exception
     return user
+
+def get_current_active_user(current_user:UserResponse=Depends(get_current_user)):
+    if current_user.disbaled:
+        raise HTTPException(status_code=400, details="inactive user")
+    return current_user
+
+
+def get_current_admin(current_user:UserResponse=Depends(get_current_user)):
+    if current_user.role!="admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough permission")
+    return current_user
+
