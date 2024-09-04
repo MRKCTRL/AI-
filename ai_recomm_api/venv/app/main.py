@@ -2,6 +2,8 @@ from fastapi import FASTAPI
 from .routers import users, content, recommendations 
 from .database import Base, engine 
 from fastapi import FASTAPI,WebSocket
+from fastapi.middleware.cors import CORSMiddleware
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -20,3 +22,18 @@ async def websocket_endpoint(websocket:WebSocket):
     while True:
         data=await websocket.recieve_text()
         await websocket.send_text(f"Message recieved: {data}")
+        
+
+orgins=[
+        "http://localhost:5137"
+]
+
+
+
+app.add_middleware(
+        CORSMiddleware,
+        allow_orgins=orgins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+)
